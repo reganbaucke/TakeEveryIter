@@ -1,0 +1,4 @@
+name = "TakeEvery"
+uuid = "0fba76c4-b3d4-4f23-9e68-bbc3f11dfddb"
+authors = ["Regan Baucke <regan02@gmail.com>"]
+version = "0.1.0"

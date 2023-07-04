@@ -1,6 +1,6 @@
-module TakeEveryRange
+module TakeEveryIter
 
-struct TakeEvery{T, A} <: AbstractRange{T} 
+struct TakeEvery{T, A} <: AbstractVector{T} 
     range::A
     take::Int
     every::Int
@@ -57,35 +57,44 @@ function Base.length(u::TakeEvery)
 end
 
 function Base.first(u::TakeEvery)
-    first(u.range)
+    u[1]
 end
 
-function Base.collect(u::TakeEvery{A}) where A <: AbstractVector{T} where T
+function Base.collect(u::TakeEvery{T, A}) where T where A
     collect(T, u)
 end
 
+function Base.size(u::TakeEvery)
+    (length(u),)
+end
+
 function Base.getindex(u::TakeEvery, i::Int)
-    j = 0
-    it = iterate(u)
-    while true
-        j = j + 1
-        if it === nothing
-            throw(BoundsError)
-        elseif j == i
-            return it[1]
+    if 1 <= i <= length(u)
+        j = 0
+        it = iterate(u)
+        while true
+            j = j + 1
+            if j == i
+                return it[1]
+            end
+            it = iterate(u, it[2])
         end
-        it = iterate(u, it[2])
+    else
+        throw(BoundsError(u, i))
     end
 end
 
 function Base.show(io, mime, u::TakeEvery)
-    show(io, mime, u.range) 
+    show(u.range) 
     print(" taking $(u.take) of every $(u.every) elements.")
 end
 
-function Base.show(io, u::TakeEvery)
-    show(io, u.range) 
+function Base.show(::IO, u::TakeEvery)
+    show(u.range) 
     print(" taking $(u.take) of every $(u.every) elements.")
 end
+
+export
+    TakeEvery
 
 end 
